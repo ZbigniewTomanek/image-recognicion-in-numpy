@@ -21,7 +21,17 @@ def hamming_distance(X, X_train):
     :return: macierz odległości pomiędzy obiektami z "X" i "X_train" N1xN2
     """
 
-    return cdist(X.todense(), X_train.todense(), 'hamming') * X.shape[1]
+    X = X.toarray()
+    X_train = X_train.toarray()
+    X_train = X_train.transpose()
+
+    ones = X.astype(np.uint8) @ X_train.astype(np.uint8)
+    zeros = (~X).astype(np.uint8) @ (~X_train).astype(np.uint8)
+
+    # cdist(X.todense(), X_train.todense(), 'hamming') * X.shape[1] oneliner xD
+
+    return (np.ones(shape=ones.shape) * X.shape[1]) - ones - zeros
+
 
 
 def sort_train_labels_knn(Dist, y):
